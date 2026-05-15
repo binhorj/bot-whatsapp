@@ -1,5 +1,4 @@
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
 const cron = require('node-cron');
 const fs = require('fs');
 const axios = require('axios');
@@ -103,14 +102,15 @@ async function enviarProduto() {
 
 const client = new Client({
   authStrategy: new LocalAuth(),
-  puppeteer: { headless: true }
+  puppeteer: {
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  }
 });
 
 client.on('qr', qr => {
-  console.log('Escaneie o QR Code com o WhatsApp:');
-  require('qrcode').toFile('./qrcode.png', qr, { width: 400 }, function(err) {
-    if (!err) console.log('Arquivo qrcode.png criado!');
-  });
+  console.log('QR_CODE:' + qr);
 });
 
 client.on('ready', () => {
