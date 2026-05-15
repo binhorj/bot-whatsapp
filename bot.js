@@ -1,10 +1,11 @@
+const painel = require('./painel');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const cron = require('node-cron');
 const fs = require('fs');
 const axios = require('axios');
 const scraper = require('./scraper');
 const extrairDadosProduto = scraper.extrairDadosProduto;
-const painel = require('./painel');
+
 
 function lerConfig() {
   if (!fs.existsSync('./config.json')) return { modo: 'minutos', intervalo: 30, horarios: '9,14,19' };
