@@ -1,11 +1,10 @@
-const painel = require('./painel');
 const { Client, LocalAuth, MessageMedia } = require('whatsapp-web.js');
 const cron = require('node-cron');
 const fs = require('fs');
 const axios = require('axios');
 const scraper = require('./scraper');
 const extrairDadosProduto = scraper.extrairDadosProduto;
-
+const painel = require('./painel');
 
 function lerConfig() {
   if (!fs.existsSync('./config.json')) return { modo: 'minutos', intervalo: 30, horarios: '9,14,19' };
@@ -107,16 +106,8 @@ const client = new Client({
   puppeteer: {
     headless: true,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
-   args: [
-  '--no-sandbox',
-  '--disable-setuid-sandbox',
-  '--disable-dev-shm-usage',
-  '--disable-accelerated-2d-canvas',
-  '--no-first-run',
-  '--no-zygote',
-  '--single-process',
-  '--disable-gpu'
-]
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  }
 });
 
 client.on('qr', qr => {
