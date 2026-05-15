@@ -4,6 +4,7 @@ const fs = require('fs');
 const axios = require('axios');
 const scraper = require('./scraper');
 const extrairDadosProduto = scraper.extrairDadosProduto;
+const painel = require('./painel');
 
 function lerConfig() {
   if (!fs.existsSync('./config.json')) return { modo: 'minutos', intervalo: 30, horarios: '9,14,19' };
@@ -111,12 +112,17 @@ const client = new Client({
 
 client.on('qr', qr => {
   console.log('QR_CODE:' + qr);
+  const QRCode = require('qrcode');
+  QRCode.toDataURL(qr, (err, url) => {
+    if (!err) painel.setQR(url);
+  });
 });
 
 client.on('ready', () => {
   const cronExp = montarCron();
   const config = lerConfig();
   console.log('WhatsApp conectado!');
+  painel.setStatus('conectado');
   if (config.modo === 'minutos') {
     console.log('Enviando a cada ' + config.intervalo + ' minutos.');
   } else {
@@ -128,6 +134,7 @@ client.on('ready', () => {
 
 client.on('auth_failure', () => {
   console.log('Sessao expirada. Delete a pasta .wwebjs_auth e rode novamente.');
+  painel.setStatus('desconectado');
 });
 
 client.initialize();
